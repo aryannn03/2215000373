@@ -1,95 +1,99 @@
+# 🏗️ BookNest Microservices Architecture
+
 ```mermaid
 flowchart TB
 
 %% FRONTEND
+A[Angular Frontend<br/>Port: 4200<br/>AuthGuard | JWT | AdminGuard]
 
-FE[Angular Frontend<br>Port 4200]
+%% API GATEWAY
+B[API Gateway<br/>Port: 8080<br/>Spring Cloud Gateway<br/>JWT | Routing | Swagger]
 
-%% GATEWAY
+%% EUREKA
+C[Eureka Server<br/>Port: 8761<br/>Service Discovery]
 
-GW[API Gateway<br>Port 8080]
+A -->|HTTPS / REST| B
+B <--> C
 
-%% DISCOVERY
+%% MICROSERVICES
+subgraph SERVICES[Microservices]
 
-EU[Eureka Server<br>Port 8761]
-
-%% SERVICES
-
-subgraph MICROSERVICES
-
-AUTH[Auth Service<br>8081]
-BOOK[Book Service<br>8082]
-CART[Cart Service<br>8083]
-ORDER[Order Service<br>8084]
-WALLET[Wallet Service<br>8085]
-REVIEW[Review Service<br>8086]
-NOTIF[Notification Service<br>8087]
-WISH[Wishlist Service<br>8088]
+D[Auth Service<br/>:8081<br/>JWT + OAuth2]
+E[Book Service<br/>:8082<br/>Redis Cache]
+F[Cart Service<br/>:8083<br/>Feign Client]
+G[Order Service<br/>:8084<br/>Razorpay]
+H[Wallet Service<br/>:8085<br/>Transactional]
+I[Review Service<br/>:8086<br/>Feign Client]
+J[Notification Service<br/>:8087<br/>RabbitMQ Consumer]
+K[Wishlist Service<br/>:8088<br/>Feign Client]
 
 end
+
+%% GATEWAY ROUTING
+B --> D
+B --> E
+B --> F
+B --> G
+B --> H
+B --> I
+B --> J
+B --> K
+
+%% FEIGN COMMUNICATION
+F -.->|Feign| E
+F -.->|Feign| D
+G -.->|Feign| H
+G -.->|Feign| E
+I -.->|Feign| E
+K -.->|Feign| E
+
+%% RABBITMQ
+L[RabbitMQ<br/>order-exchange<br/>order-notification-queue]
+
+G -->|Publish| L
+L -->|Consume| J
+
+%% REDIS
+M[Redis<br/>OTP Store<br/>Token Blacklist<br/>Book Cache]
+
+D --> M
+E --> M
 
 %% DATABASES
+subgraph DATABASES[MySQL Databases]
 
-subgraph DATABASES
-
-AUTHDB[(auth_db)]
-BOOKDB[(book_db)]
-CARTDB[(cart_db)]
-ORDERDB[(order_db)]
-WALLETDB[(wallet_db)]
-REVIEWDB[(review_db)]
-WISHDB[(wishlist_db)]
+N[auth_db<br/>users]
+O[book_db<br/>books]
+P[cart_db<br/>cart_items]
+Q[order_db<br/>orders]
+R[wallet_db<br/>wallets + txns]
+S[review_db<br/>reviews]
+T[wishlist_db<br/>wishlists]
+U[notification_db<br/>notifications]
 
 end
 
-%% CACHE & MQ
+D --> N
+E --> O
+F --> P
+G --> Q
+H --> R
+I --> S
+K --> T
+J --> U
 
-REDIS[(Redis)]
-RABBIT[RabbitMQ]
+%% EXTERNAL SERVICES
+subgraph EXTERNALS[External Services]
 
-%% FLOW
+V[Google OAuth2]
+W[Razorpay Payment Gateway]
+X[Gmail SMTP]
+Y[Razorpay SDK]
 
-FE --> GW
+end
 
-GW --> AUTH
-GW --> BOOK
-GW --> CART
-GW --> ORDER
-GW --> WALLET
-GW --> REVIEW
-GW --> NOTIF
-GW --> WISH
-
-AUTH --> AUTHDB
-BOOK --> BOOKDB
-CART --> CARTDB
-ORDER --> ORDERDB
-WALLET --> WALLETDB
-REVIEW --> REVIEWDB
-WISH --> WISHDB
-
-AUTH --> REDIS
-BOOK --> REDIS
-
-ORDER --> RABBIT
-RABBIT --> NOTIF
-
-AUTH -.-> EU
-BOOK -.-> EU
-CART -.-> EU
-ORDER -.-> EU
-
-%% COLORS
-
-classDef frontend fill:#6c63ff,color:#fff
-classDef gateway fill:#2196f3,color:#fff
-classDef service fill:#00b894,color:#fff
-classDef db fill:#c49000,color:#fff
-classDef infra fill:#e67e22,color:#fff
-
-class FE frontend
-class GW,EU gateway
-class AUTH,BOOK,CART,ORDER,WALLET,REVIEW,NOTIF,WISH service
-class AUTHDB,BOOKDB,CARTDB,ORDERDB,WALLETDB,REVIEWDB,WISHDB db
-class REDIS,RABBIT infra
+D --> V
+G --> W
+G --> Y
+J --> X
 ```
