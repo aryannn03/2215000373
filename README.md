@@ -1,45 +1,77 @@
-```mermaid
+```
 flowchart TB
 
-%% ================= FRONTEND =================
-FE[Angular Frontend<br/>4200]
+%% =========================
+%% FRONTEND
+%% =========================
 
-%% ================= GATEWAY =================
-GW[API Gateway<br/>8080]
+FE[Angular Frontend<br/>Port: 4200<br/>AuthGuard + AdminGuard + JWT + localStorage]
 
-%% ================= CORE SERVICES =================
-AUTH[Auth Service<br/>8081]
-BOOK[Book Service<br/>8082]
-CART[Cart Service<br/>8083]
-ORDER[Order Service<br/>8084]
-WALLET[Wallet Service<br/>8085]
-REVIEW[Review Service<br/>8086]
-NOTIF[Notification Service<br/>8087]
-WISH[Wishlist Service<br/>8088]
+%% =========================
+%% GATEWAY & DISCOVERY
+%% =========================
 
-%% ================= INFRA =================
-EU[Eureka Server<br/>8761]
-RABBIT[RabbitMQ]
-REDIS[Redis Cache]
+GW[API Gateway<br/>Port: 8080<br/>Spring Cloud Gateway + CORS + JWT + Swagger]
 
-%% ================= DATABASES =================
+EU[Eureka Discovery Server<br/>Port: 8761<br/>Service Discovery]
+
+%% =========================
+%% MICROSERVICES
+%% =========================
+
+AUTH[Auth Service<br/>Port: 8081<br/>JWT + OAuth2]
+
+BOOK[Book Service<br/>Port: 8082<br/>Redis Cache]
+
+CART[Cart Service<br/>Port: 8083<br/>Feign Client]
+
+ORDER[Order Service<br/>Port: 8084<br/>Razorpay Integration]
+
+WALLET[Wallet Service<br/>Port: 8085<br/>Transactional]
+
+REVIEW[Review Service<br/>Port: 8086<br/>Feign Client]
+
+NOTIF[Notification Service<br/>Port: 8087<br/>RabbitMQ Consumer + Gmail SMTP]
+
+WISHLIST[Wishlist Service<br/>Port: 8088<br/>Feign Client]
+
+%% =========================
+%% MESSAGE BROKER & CACHE
+%% =========================
+
+MQ[RabbitMQ<br/>orderExchange + orderNotificationQueue]
+
+REDIS[Redis Cache<br/>OTP + Token Blacklist + Book Cache]
+
+%% =========================
+%% DATABASES
+%% =========================
+
 AUTHDB[(auth_db)]
 BOOKDB[(book_db)]
 CARTDB[(cart_db)]
 ORDERDB[(order_db)]
 WALLETDB[(wallet_db)]
 REVIEWDB[(review_db)]
-WISHDB[(wishlist_db)]
-NOTIFDB[(notification_db)]
+NOTIFDB[(notif_db)]
+WISHLISTDB[(wishlist_db)]
 
-%% ================= EXTERNAL =================
-GOOGLE[OAuth2]
-RAZOR[Razorpay]
+%% =========================
+%% EXTERNAL SERVICES
+%% =========================
+
+GOOGLE[Google OAuth2]
+RAZORPAY[Razorpay Payment Gateway]
 SMTP[Gmail SMTP]
+RAZORPAYSDK[Razorpay Signature Verification]
 
-%% ================= MAIN FLOW =================
+%% =========================
+%% CONNECTIONS
+%% =========================
 
-FE --> GW
+FE -->|HTTPS + JWT| GW
+
+GW --> EU
 
 GW --> AUTH
 GW --> BOOK
@@ -48,33 +80,7 @@ GW --> ORDER
 GW --> WALLET
 GW --> REVIEW
 GW --> NOTIF
-GW --> WISH
-
-%% ================= SERVICE DISCOVERY =================
-
-GW -.-> EU
-AUTH -.-> EU
-BOOK -.-> EU
-ORDER -.-> EU
-
-%% ================= FEIGN =================
-
-CART -. Feign .-> BOOK
-REVIEW -. Feign .-> BOOK
-WISH -. Feign .-> BOOK
-ORDER -. Feign .-> WALLET
-
-%% ================= MESSAGING =================
-
-ORDER --> RABBIT
-RABBIT --> NOTIF
-
-%% ================= REDIS =================
-
-AUTH --> REDIS
-BOOK --> REDIS
-
-%% ================= DATABASES =================
+GW --> WISHLIST
 
 AUTH --> AUTHDB
 BOOK --> BOOKDB
@@ -82,12 +88,20 @@ CART --> CARTDB
 ORDER --> ORDERDB
 WALLET --> WALLETDB
 REVIEW --> REVIEWDB
-WISH --> WISHDB
 NOTIF --> NOTIFDB
+WISHLIST --> WISHLISTDB
 
-%% ================= EXTERNAL SERVICES =================
+BOOK --> REDIS
+AUTH --> REDIS
+
+ORDER --> MQ
+MQ --> NOTIF
 
 AUTH --> GOOGLE
-ORDER --> RAZOR
+ORDER --> RAZORPAY
 NOTIF --> SMTP
+ORDER --> RAZORPAYSDK
 ```
+CART -.Feign.-> BOOK
+REVIEW -.Feign.-> BOOK
+WISHLIST -.Feign.-> BOOK
