@@ -7,10 +7,7 @@ FE[Angular Frontend<br/>4200]
 %% ================= GATEWAY =================
 GW[API Gateway<br/>8080]
 
-%% ================= DISCOVERY =================
-EU[Eureka Server<br/>8761]
-
-%% ================= MICROSERVICES =================
+%% ================= CORE SERVICES =================
 AUTH[Auth Service<br/>8081]
 BOOK[Book Service<br/>8082]
 CART[Cart Service<br/>8083]
@@ -20,7 +17,8 @@ REVIEW[Review Service<br/>8086]
 NOTIF[Notification Service<br/>8087]
 WISH[Wishlist Service<br/>8088]
 
-%% ================= MESSAGING =================
+%% ================= INFRA =================
+EU[Eureka Server<br/>8761]
 RABBIT[RabbitMQ]
 REDIS[Redis Cache]
 
@@ -39,7 +37,7 @@ GOOGLE[OAuth2]
 RAZOR[Razorpay]
 SMTP[Gmail SMTP]
 
-%% ================= FLOW =================
+%% ================= MAIN FLOW =================
 
 FE --> GW
 
@@ -52,18 +50,32 @@ GW --> REVIEW
 GW --> NOTIF
 GW --> WISH
 
-%% Eureka
+%% ================= SERVICE DISCOVERY =================
+
+GW -.-> EU
 AUTH -.-> EU
 BOOK -.-> EU
-CART -.-> EU
 ORDER -.-> EU
-WALLET -.-> EU
-REVIEW -.-> EU
-NOTIF -.-> EU
-WISH -.-> EU
-GW -.-> EU
 
-%% Databases
+%% ================= FEIGN =================
+
+CART -. Feign .-> BOOK
+REVIEW -. Feign .-> BOOK
+WISH -. Feign .-> BOOK
+ORDER -. Feign .-> WALLET
+
+%% ================= MESSAGING =================
+
+ORDER --> RABBIT
+RABBIT --> NOTIF
+
+%% ================= REDIS =================
+
+AUTH --> REDIS
+BOOK --> REDIS
+
+%% ================= DATABASES =================
+
 AUTH --> AUTHDB
 BOOK --> BOOKDB
 CART --> CARTDB
@@ -73,21 +85,8 @@ REVIEW --> REVIEWDB
 WISH --> WISHDB
 NOTIF --> NOTIFDB
 
-%% Redis
-AUTH --> REDIS
-BOOK --> REDIS
+%% ================= EXTERNAL SERVICES =================
 
-%% RabbitMQ
-ORDER --> RABBIT
-RABBIT --> NOTIF
-
-%% Feign
-CART -. Feign .-> BOOK
-REVIEW -. Feign .-> BOOK
-WISH -. Feign .-> BOOK
-ORDER -. Feign .-> WALLET
-
-%% External Services
 AUTH --> GOOGLE
 ORDER --> RAZOR
 NOTIF --> SMTP
