@@ -1,4 +1,6 @@
-```
+# 📖 Architecture Diagram
+
+```mermaid
 flowchart TB
 
 %% =========================
@@ -101,7 +103,8 @@ AUTH --> GOOGLE
 ORDER --> RAZORPAY
 NOTIF --> SMTP
 ORDER --> RAZORPAYSDK
-```
+
 CART -.Feign.-> BOOK
 REVIEW -.Feign.-> BOOK
 WISHLIST -.Feign.-> BOOK
+```
