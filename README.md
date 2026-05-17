@@ -1,120 +1,96 @@
-# 🏗️ BookNest Microservices Architecture
+## 🏗️ BookNest Microservices Architecture
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/YOUR_GITHUB_USERNAME/YOUR_REPOSITORY/main/assets/architecture.png" alt="BookNest Architecture Diagram" width="100%">
-</p>
+```mermaid
+flowchart TB
 
----
+%% =========================
+%% FRONTEND
+%% =========================
 
-## 📌 Overview
+FE[Angular Frontend<br/>Port: 4200<br/>AuthGuard + AdminGuard + JWT + localStorage]
 
-BookNest is a scalable **Microservices-based Online Bookstore Application** built using:
+%% =========================
+%% GATEWAY & DISCOVERY
+%% =========================
 
-- Angular
-- Spring Boot
-- Spring Cloud Gateway
-- Eureka Discovery Server
-- RabbitMQ
-- Redis
-- MySQL
-- JWT Authentication
-- Razorpay Integration
+GW[API Gateway<br/>Port: 8080<br/>Spring Cloud Gateway + CORS + JWT passthrough + Swagger UI]
 
-The system follows a distributed microservices architecture where each service is independently deployable and communicates using REST APIs and asynchronous messaging.
+EU[Eureka Discovery Server<br/>Port: 8761<br/>Service Discovery]
 
----
+FE -->|HTTPS + Bearer JWT| GW
+GW --> EU
 
-# ⚙️ Tech Stack
+%% =========================
+%% MICROSERVICES
+%% =========================
 
-| Layer | Technology |
-|---|---|
-| Frontend | Angular |
-| Backend | Spring Boot |
-| API Gateway | Spring Cloud Gateway |
-| Service Discovery | Eureka |
-| Security | Spring Security + JWT |
-| OAuth | Google OAuth2 |
-| Communication | REST + OpenFeign |
-| Messaging | RabbitMQ |
-| Cache | Redis |
-| Database | MySQL |
-| Payment Gateway | Razorpay |
-| Email Service | Gmail SMTP |
+AUTH[Auth Service<br/>Port: 8081<br/>JWT + OAuth2]
+BOOK[Book Service<br/>Port: 8082<br/>Redis Cache]
+CART[Cart Service<br/>Port: 8083<br/>Feign]
+ORDER[Order Service<br/>Port: 8084<br/>Razorpay]
+WALLET[Wallet Service<br/>Port: 8085<br/>Transactional]
+REVIEW[Review Service<br/>Port: 8086<br/>Feign]
+NOTIF[Notification Service<br/>Port: 8087<br/>RabbitMQ Consumer + Gmail]
+WISHLIST[Wishlist Service<br/>Port: 8088<br/>Feign]
 
----
+GW --> AUTH
+GW --> BOOK
+GW --> CART
+GW --> ORDER
+GW --> WALLET
+GW --> REVIEW
+GW --> NOTIF
+GW --> WISHLIST
 
-# 🧩 Microservices
+%% =========================
+%% MESSAGE BROKER
+%% =========================
 
-| Service | Port | Responsibility |
-|---|---|---|
-| API Gateway | 8080 | Routing, JWT Validation, CORS |
-| Auth Service | 8081 | Authentication & Authorization |
-| Book Service | 8082 | Book Management |
-| Cart Service | 8083 | Cart Operations |
-| Order Service | 8084 | Order & Payment Processing |
-| Wallet Service | 8085 | Wallet Transactions |
-| Review Service | 8086 | Ratings & Reviews |
-| Notification Service | 8087 | Email Notifications |
-| Wishlist Service | 8088 | Wishlist Management |
-| Eureka Server | 8761 | Service Discovery |
+RMQ[RabbitMQ<br/>orderExchange + order.notification.queue]
 
----
+ORDER -->|publish| RMQ
+RMQ -->|consume| NOTIF
 
-# 🔐 Security Features
+%% =========================
+%% CACHE
+%% =========================
 
-- JWT Authentication
-- Role-Based Authorization
-- OAuth2 Login
-- API Gateway Security
-- Token Blacklisting using Redis
-- BCrypt Password Encryption
+REDIS[Redis Cache<br/>OTP + token blacklist + books]
 
----
+AUTH --> REDIS
+BOOK --> REDIS
 
-# 📨 Messaging Architecture
+%% =========================
+%% DATABASES
+%% =========================
 
-RabbitMQ is used for asynchronous communication between services.
+ADB[(auth_db)]
+BDB[(book_db)]
+CDB[(cart_db)]
+ODB[(order_db)]
+WDB[(wallet_db)]
+RDB[(review_db)]
+NDB[(notif_db)]
+WLDB[(wishlist_db)]
 
-### Flow
-1. Order Service publishes order events
-2. RabbitMQ processes the message
-3. Notification Service consumes the event
-4. Email notification is sent to the user
+AUTH --> ADB
+BOOK --> BDB
+CART --> CDB
+ORDER --> ODB
+WALLET --> WDB
+REVIEW --> RDB
+NOTIF --> NDB
+WISHLIST --> WLDB
 
----
+%% =========================
+%% EXTERNAL SERVICES
+%% =========================
 
-# ⚡ Redis Usage
+GOOGLE[Google OAuth2]
+RAZOR[Razorpay Gateway]
+MAIL[Gmail SMTP]
 
-Redis is used for:
-
-- OTP Storage
-- JWT Token Blacklisting
-- Book Data Caching
-- Performance Optimization
-
----
-
-# 🌐 External Integrations
-
-- Google OAuth2
-- Razorpay Payment Gateway
-- Gmail SMTP
-- Razorpay Signature Verification
-
----
-
-# 🚀 Future Improvements
-
-- Docker & Kubernetes Deployment
-- CI/CD Pipeline
-- Distributed Tracing
-- Centralized Logging
-- Monitoring with Prometheus & Grafana
-
----
-
-# 👨‍💻 Author
-
-**Aryan Malik**  
-B.Tech CSE Student  
-Full Stack Java Developer 🚀
+AUTH --> GOOGLE
+ORDER --> RAZOR
+NOTIF --> MAIL
+```
