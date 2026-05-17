@@ -1,110 +1,120 @@
-# 📖 Architecture Diagram
+# 🏗️ BookNest Microservices Architecture
 
-```mermaid
-flowchart TB
+<p align="center">
+  <img src="https://raw.githubusercontent.com/YOUR_GITHUB_USERNAME/YOUR_REPOSITORY/main/assets/architecture.png" alt="BookNest Architecture Diagram" width="100%">
+</p>
 
-%% =========================
-%% FRONTEND
-%% =========================
+---
 
-FE[Angular Frontend<br/>Port: 4200<br/>AuthGuard + AdminGuard + JWT + localStorage]
+## 📌 Overview
 
-%% =========================
-%% GATEWAY & DISCOVERY
-%% =========================
+BookNest is a scalable **Microservices-based Online Bookstore Application** built using:
 
-GW[API Gateway<br/>Port: 8080<br/>Spring Cloud Gateway + CORS + JWT + Swagger]
+- Angular
+- Spring Boot
+- Spring Cloud Gateway
+- Eureka Discovery Server
+- RabbitMQ
+- Redis
+- MySQL
+- JWT Authentication
+- Razorpay Integration
 
-EU[Eureka Discovery Server<br/>Port: 8761<br/>Service Discovery]
+The system follows a distributed microservices architecture where each service is independently deployable and communicates using REST APIs and asynchronous messaging.
 
-%% =========================
-%% MICROSERVICES
-%% =========================
+---
 
-AUTH[Auth Service<br/>Port: 8081<br/>JWT + OAuth2]
+# ⚙️ Tech Stack
 
-BOOK[Book Service<br/>Port: 8082<br/>Redis Cache]
+| Layer | Technology |
+|---|---|
+| Frontend | Angular |
+| Backend | Spring Boot |
+| API Gateway | Spring Cloud Gateway |
+| Service Discovery | Eureka |
+| Security | Spring Security + JWT |
+| OAuth | Google OAuth2 |
+| Communication | REST + OpenFeign |
+| Messaging | RabbitMQ |
+| Cache | Redis |
+| Database | MySQL |
+| Payment Gateway | Razorpay |
+| Email Service | Gmail SMTP |
 
-CART[Cart Service<br/>Port: 8083<br/>Feign Client]
+---
 
-ORDER[Order Service<br/>Port: 8084<br/>Razorpay Integration]
+# 🧩 Microservices
 
-WALLET[Wallet Service<br/>Port: 8085<br/>Transactional]
+| Service | Port | Responsibility |
+|---|---|---|
+| API Gateway | 8080 | Routing, JWT Validation, CORS |
+| Auth Service | 8081 | Authentication & Authorization |
+| Book Service | 8082 | Book Management |
+| Cart Service | 8083 | Cart Operations |
+| Order Service | 8084 | Order & Payment Processing |
+| Wallet Service | 8085 | Wallet Transactions |
+| Review Service | 8086 | Ratings & Reviews |
+| Notification Service | 8087 | Email Notifications |
+| Wishlist Service | 8088 | Wishlist Management |
+| Eureka Server | 8761 | Service Discovery |
 
-REVIEW[Review Service<br/>Port: 8086<br/>Feign Client]
+---
 
-NOTIF[Notification Service<br/>Port: 8087<br/>RabbitMQ Consumer + Gmail SMTP]
+# 🔐 Security Features
 
-WISHLIST[Wishlist Service<br/>Port: 8088<br/>Feign Client]
+- JWT Authentication
+- Role-Based Authorization
+- OAuth2 Login
+- API Gateway Security
+- Token Blacklisting using Redis
+- BCrypt Password Encryption
 
-%% =========================
-%% MESSAGE BROKER & CACHE
-%% =========================
+---
 
-MQ[RabbitMQ<br/>orderExchange + orderNotificationQueue]
+# 📨 Messaging Architecture
 
-REDIS[Redis Cache<br/>OTP + Token Blacklist + Book Cache]
+RabbitMQ is used for asynchronous communication between services.
 
-%% =========================
-%% DATABASES
-%% =========================
+### Flow
+1. Order Service publishes order events
+2. RabbitMQ processes the message
+3. Notification Service consumes the event
+4. Email notification is sent to the user
 
-AUTHDB[(auth_db)]
-BOOKDB[(book_db)]
-CARTDB[(cart_db)]
-ORDERDB[(order_db)]
-WALLETDB[(wallet_db)]
-REVIEWDB[(review_db)]
-NOTIFDB[(notif_db)]
-WISHLISTDB[(wishlist_db)]
+---
 
-%% =========================
-%% EXTERNAL SERVICES
-%% =========================
+# ⚡ Redis Usage
 
-GOOGLE[Google OAuth2]
-RAZORPAY[Razorpay Payment Gateway]
-SMTP[Gmail SMTP]
-RAZORPAYSDK[Razorpay Signature Verification]
+Redis is used for:
 
-%% =========================
-%% CONNECTIONS
-%% =========================
+- OTP Storage
+- JWT Token Blacklisting
+- Book Data Caching
+- Performance Optimization
 
-FE -->|HTTPS + JWT| GW
+---
 
-GW --> EU
+# 🌐 External Integrations
 
-GW --> AUTH
-GW --> BOOK
-GW --> CART
-GW --> ORDER
-GW --> WALLET
-GW --> REVIEW
-GW --> NOTIF
-GW --> WISHLIST
+- Google OAuth2
+- Razorpay Payment Gateway
+- Gmail SMTP
+- Razorpay Signature Verification
 
-AUTH --> AUTHDB
-BOOK --> BOOKDB
-CART --> CARTDB
-ORDER --> ORDERDB
-WALLET --> WALLETDB
-REVIEW --> REVIEWDB
-NOTIF --> NOTIFDB
-WISHLIST --> WISHLISTDB
+---
 
-BOOK --> REDIS
-AUTH --> REDIS
+# 🚀 Future Improvements
 
-ORDER --> MQ
-MQ --> NOTIF
+- Docker & Kubernetes Deployment
+- CI/CD Pipeline
+- Distributed Tracing
+- Centralized Logging
+- Monitoring with Prometheus & Grafana
 
-AUTH --> GOOGLE
-ORDER --> RAZORPAY
-NOTIF --> SMTP
-ORDER --> RAZORPAYSDK
+---
 
-CART -.Feign.-> BOOK
-REVIEW -.Feign.-> BOOK
-WISHLIST -.Feign.-> BOOK
-```
+# 👨‍💻 Author
+
+**Aryan Malik**  
+B.Tech CSE Student  
+Full Stack Java Developer 🚀
