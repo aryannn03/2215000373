@@ -290,7 +290,6 @@ erDiagram
     BOOKS ||--o{ WISHLIST_ITEMS : "saved in"
 ```
 
-
 ```mermaid
 flowchart LR
 
@@ -428,3 +427,8 @@ flowchart LR
     REVIEW --> SYSTEM
     WALLET --> SYSTEM
 ```
+
+
+
+
+(
