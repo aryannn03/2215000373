@@ -155,163 +155,137 @@ NOTIF --> MAIL
 ```mermaid
 erDiagram
 
-%% =====================================================
-%% USERS
-%% =====================================================
+    USERS {
+        int userId PK
+        string fullName
+        string email
+        string passwordHash
+        string role
+        string provider
+        bigint mobile
+        datetime createdAt
+    }
 
-USERS {
-    int id PK
-    string name
-    string email
-    string passwordHash
-    string provider
-    string role
-    boolean enabled
-    datetime createdAt
-}
+    BOOKS {
+        int bookId PK
+        string title
+        string author
+        string isbn
+        double price
+        int stock
+        string genre
+        string publisher
+        double rating
+        text description
+        string coverImageUrl
+        date publishedDate
+        boolean featured
+    }
 
-%% =====================================================
-%% BOOKS
-%% =====================================================
+    CARTS {
+        int cartId PK
+        int userId
+        double totalPrice
+    }
 
-BOOKS {
-    int id PK
-    string title
-    string author
-    decimal price
-    string isbn
-    string publisher
-    integer stock
-    string category
-    string imageUrl
-    text description
-    decimal avgRating
-    datetime publishedDate
-}
+    CART_ITEMS {
+        int itemId PK
+        int bookId
+        string bookTitle
+        double price
+        int quantity
+        int cartId FK
+    }
 
-%% =====================================================
-%% CART
-%% =====================================================
+    ORDERS {
+        int orderId PK
+        int userId
+        date orderDate
+        double amountPaid
+        string modeOfPayment
+        string razorpayPaymentId
+        string orderStatus
+        int quantity
+        int bookId
+        string bookTitle
+        double bookPrice
+        int addressId FK
+    }
 
-CARTS {
-    int id PK
-    int userId FK
-}
+    ADDRESSES {
+        int addressId PK
+        int customerId
+        string fullName
+        string mobileNumber
+        string flatNumber
+        string street
+        string city
+        string pincode
+        string state
+    }
 
-CART_ITEMS {
-    int id PK
-    int cartId FK
-    int bookId FK
-    decimal price
-    int quantity
-    int count
-}
+    WALLETS {
+        int walletId PK
+        int userId
+        double currentBalance
+    }
 
-%% =====================================================
-%% ORDERS
-%% =====================================================
+    STATEMENTS {
+        int statementId PK
+        string transactionType
+        double amount
+        datetime dateTime
+        int orderId
+        string transactionRemarks
+        int walletId FK
+    }
 
-ORDERS {
-    int id PK
-    int userId FK
-    decimal totalAmount
-    string paymentMethod
-    string orderStatus
-    string shippingAddress
-    datetime createdAt
-}
+    REVIEWS {
+        int reviewId PK
+        int bookId
+        int userId
+        string fullName
+        int rating
+        text comment
+        date reviewDate
+        boolean verified
+    }
 
-ORDER_ITEMS {
-    int id PK
-    int orderId FK
-    int bookId FK
-    decimal price
-    int quantity
-}
+    NOTIFICATIONS {
+        int notificationId PK
+        int userId
+        string type
+        text message
+        boolean isRead
+        datetime createdAt
+    }
 
-%% =====================================================
-%% REVIEWS
-%% =====================================================
+    WISHLISTS {
+        int wishlistId PK
+        int userId
+        date createdAt
+    }
 
-REVIEWS {
-    int id PK
-    int userId FK
-    int bookId FK
-    int rating
-    string comment
-    datetime createdAt
-}
+    WISHLIST_ITEMS {
+        int itemId PK
+        int bookId
+        string bookTitle
+        double bookPrice
+        int wishlistId FK
+    }
 
-%% =====================================================
-%% WISHLIST
-%% =====================================================
-
-WISHLISTS {
-    int id PK
-    int userId FK
-}
-
-WISHLIST_ITEMS {
-    int id PK
-    int wishlistId FK
-    int bookId FK
-}
-
-%% =====================================================
-%% WALLET
-%% =====================================================
-
-WALLETS {
-    int id PK
-    int userId FK
-    decimal balance
-}
-
-TRANSACTIONS {
-    int id PK
-    int walletId FK
-    string type
-    decimal amount
-    string status
-    datetime createdAt
-}
-
-%% =====================================================
-%% ADDRESSES
-%% =====================================================
-
-ADDRESSES {
-    int id PK
-    int userId FK
-    string fullName
-    string mobileNumber
-    string addressLine
-    string city
-    string pincode
-    string state
-}
-
-%% =====================================================
-%% RELATIONSHIPS
-%% =====================================================
-
-USERS ||--o{ ORDERS : places
-USERS ||--|| CARTS : owns
-USERS ||--|| WISHLISTS : owns
-USERS ||--|| WALLETS : has
-USERS ||--o{ REVIEWS : writes
-USERS ||--o{ ADDRESSES : saves
-
-BOOKS ||--o{ CART_ITEMS : added_in
-BOOKS ||--o{ ORDER_ITEMS : ordered
-BOOKS ||--o{ REVIEWS : reviewed_in
-BOOKS ||--o{ WISHLIST_ITEMS : saved_in
-
-CARTS ||--o{ CART_ITEMS : contains
-
-ORDERS ||--o{ ORDER_ITEMS : contains
-
-WALLETS ||--o{ TRANSACTIONS : records
-
-WISHLISTS ||--o{ WISHLIST_ITEMS : contains
+    CARTS ||--o{ CART_ITEMS : contains
+    WALLETS ||--o{ STATEMENTS : records
+    WISHLISTS ||--o{ WISHLIST_ITEMS : contains
+    ORDERS }o--|| ADDRESSES : "ships to"
+    USERS ||--o{ ORDERS : places
+    USERS ||--o{ CARTS : owns
+    USERS ||--o{ WALLETS : owns
+    USERS ||--o{ REVIEWS : writes
+    USERS ||--o{ NOTIFICATIONS : receives
+    USERS ||--o{ WISHLISTS : owns
+    BOOKS ||--o{ CART_ITEMS : "referenced in"
+    BOOKS ||--o{ ORDERS : "ordered as"
+    BOOKS ||--o{ REVIEWS : "reviewed in"
+    BOOKS ||--o{ WISHLIST_ITEMS : "saved in"
 ```
