@@ -289,32 +289,35 @@ erDiagram
     BOOKS ||--o{ REVIEWS : "reviewed in"
     BOOKS ||--o{ WISHLIST_ITEMS : "saved in"
 ```
+---
+
+
+
+
 
 ```mermaid
-flowchart LR
+flowchart TD
 
     GUEST(["👤 Guest"])
     CUSTOMER(["🛒 Customer"])
     ADMIN(["🔧 Admin"])
 
-    GUEST --> CUSTOMER
+    GUEST -->|inherits| CUSTOMER
 
     subgraph PUB["Public Access"]
-        direction TB
         UC1([Browse all books])
-        UC2([Search books by keyword])
+        UC2([Search books])
         UC3([Filter by genre / author / price])
         UC4([View book details])
         UC5([View reviews and ratings])
-        UC6([Register with OTP verification])
-        UC7([Login with email and password])
-        UC8([Login with GitHub OAuth2])
-        UC9([Login with Google OAuth2])
+        UC6([Register with OTP])
+        UC7([Login with email])
+        UC8([Login with GitHub])
+        UC9([Login with Google])
         UC10([Forgot password via OTP])
     end
 
     subgraph PROFILE["Profile Management"]
-        direction TB
         UC11([View profile])
         UC12([Update profile])
         UC13([Change password])
@@ -322,7 +325,6 @@ flowchart LR
     end
 
     subgraph CART["Cart Management"]
-        direction TB
         UC15([Add book to cart])
         UC16([Remove item from cart])
         UC17([Update item quantity])
@@ -331,15 +333,13 @@ flowchart LR
     end
 
     subgraph WISH["Wishlist Management"]
-        direction TB
         UC20([Add book to wishlist])
-        UC21([Remove book from wishlist])
+        UC21([Remove from wishlist])
         UC22([Move item to cart])
         UC23([Clear wishlist])
     end
 
     subgraph ORDER["Order Management"]
-        direction TB
         UC24([Save delivery address])
         UC25([Delete delivery address])
         UC26([Place order via COD])
@@ -350,7 +350,6 @@ flowchart LR
     end
 
     subgraph WALLET["Wallet Management"]
-        direction TB
         UC31([Create wallet])
         UC32([Add money to wallet])
         UC33([View wallet balance])
@@ -358,7 +357,6 @@ flowchart LR
     end
 
     subgraph REVIEW["Review Management"]
-        direction TB
         UC35([Write a review])
         UC36([Update own review])
         UC37([Delete own review])
@@ -366,7 +364,6 @@ flowchart LR
     end
 
     subgraph NOTIF["Notifications"]
-        direction TB
         UC39([View notifications])
         UC40([Mark notification as read])
         UC41([Mark all as read])
@@ -375,7 +372,6 @@ flowchart LR
     end
 
     subgraph ADMIN_UC["Admin Controls"]
-        direction TB
         UC44([View all users])
         UC45([Delete user])
         UC46([Add new book])
@@ -390,8 +386,7 @@ flowchart LR
         UC55([View all notifications])
     end
 
-    subgraph SYSTEM["System Automated"]
-        direction TB
+    subgraph SYSTEM["⚙️ System Automated"]
         UC56([Send OTP email])
         UC57([Generate JWT on login])
         UC58([Blacklist JWT on logout])
@@ -418,17 +413,11 @@ flowchart LR
     CUSTOMER --> REVIEW
     CUSTOMER --> NOTIF
     ADMIN --> ADMIN_UC
-    ADMIN --> ORDER
 
-    PUB --> SYSTEM
     ORDER --> SYSTEM
     CART --> SYSTEM
     WISH --> SYSTEM
     REVIEW --> SYSTEM
     WALLET --> SYSTEM
+    PUB --> SYSTEM
 ```
-
-
-
-
-(
