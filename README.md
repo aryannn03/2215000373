@@ -292,92 +292,139 @@ erDiagram
 
 
 ```mermaid
-flowchart TD
-    subgraph GUEST["👤 Guest User"]
-        G1[Browse books]
-        G2[Search books]
-        G3[Filter by genre / author / price]
-        G4[View book details]
-        G5[View reviews and ratings]
-        G6[Register with OTP verification]
-        G7[Login with email and password]
-        G8[Login with GitHub OAuth2]
-        G9[Login with Google OAuth2]
-        G10[Forgot password with OTP reset]
-    end
+flowchart LR
 
-    subgraph CUSTOMER["🛒 Customer"]
-        C1[View and update profile]
-        C2[Change password]
-        C3[Add book to cart]
-        C4[Remove item from cart]
-        C5[Update item quantity]
-        C6[View cart total]
-        C7[Add book to wishlist]
-        C8[Remove book from wishlist]
-        C9[Move wishlist item to cart]
-        C10[Save delivery address]
-        C11[Delete delivery address]
-        C12[Place order via COD]
-        C13[Place order via Wallet]
-        C14[Place order via Razorpay]
-        C15[View my orders]
-        C16[Cancel order]
-        C17[Create wallet]
-        C18[Add money to wallet]
-        C19[View wallet balance]
-        C20[View transaction statements]
-        C21[Write a review]
-        C22[Update own review]
-        C23[Delete own review]
-        C24[View my reviews]
-        C25[View notifications]
-        C26[Mark notification as read]
-        C27[Mark all notifications as read]
-        C28[Delete notification]
-        C29[View unread notification count]
-        C30[Logout]
-    end
-
-    subgraph ADMIN["🔧 Admin"]
-        A1[View all users]
-        A2[Delete user]
-        A3[Add new book]
-        A4[Update book details]
-        A5[Delete book]
-        A6[Update book stock]
-        A7[View all orders]
-        A8[Change order status]
-        A9[Delete order]
-        A10[View all wallets]
-        A11[View all reviews]
-        A12[View all notifications]
-        A13[View all addresses]
-    end
-
-    subgraph SYSTEM["⚙️ System Automated"]
-        S1[Send OTP email on registration]
-        S2[Send OTP email on forgot password]
-        S3[Generate JWT on login]
-        S4[Blacklist JWT on logout]
-        S5[Refresh live book prices in cart]
-        S6[Refresh live book prices in wishlist]
-        S7[Deduct wallet balance on order]
-        S8[Refund wallet on cancellation]
-        S9[Deduct book stock on order]
-        S10[Clear cart after order placed]
-        S11[Verify Razorpay signature]
-        S12[Send order confirmation email]
-        S13[Send order cancellation email]
-        S14[Send status change email]
-        S15[Save in-app notification on order]
-        S16[Verify purchase before review]
-        S17[Sync book rating after review]
-        S18[Register all services with Eureka]
-        S19[Route requests via API Gateway]
-        S20[Cache book data in Redis]
-    end
+    GUEST(["👤 Guest"])
+    CUSTOMER(["🛒 Customer"])
+    ADMIN(["🔧 Admin"])
 
     GUEST --> CUSTOMER
-    CUSTOMER --> ADMIN
+
+    subgraph PUB["Public Access"]
+        direction TB
+        UC1([Browse all books])
+        UC2([Search books by keyword])
+        UC3([Filter by genre / author / price])
+        UC4([View book details])
+        UC5([View reviews and ratings])
+        UC6([Register with OTP verification])
+        UC7([Login with email and password])
+        UC8([Login with GitHub OAuth2])
+        UC9([Login with Google OAuth2])
+        UC10([Forgot password via OTP])
+    end
+
+    subgraph PROFILE["Profile Management"]
+        direction TB
+        UC11([View profile])
+        UC12([Update profile])
+        UC13([Change password])
+        UC14([Logout])
+    end
+
+    subgraph CART["Cart Management"]
+        direction TB
+        UC15([Add book to cart])
+        UC16([Remove item from cart])
+        UC17([Update item quantity])
+        UC18([View cart and total])
+        UC19([Clear cart])
+    end
+
+    subgraph WISH["Wishlist Management"]
+        direction TB
+        UC20([Add book to wishlist])
+        UC21([Remove book from wishlist])
+        UC22([Move item to cart])
+        UC23([Clear wishlist])
+    end
+
+    subgraph ORDER["Order Management"]
+        direction TB
+        UC24([Save delivery address])
+        UC25([Delete delivery address])
+        UC26([Place order via COD])
+        UC27([Place order via Wallet])
+        UC28([Place order via Razorpay])
+        UC29([View my orders])
+        UC30([Cancel order])
+    end
+
+    subgraph WALLET["Wallet Management"]
+        direction TB
+        UC31([Create wallet])
+        UC32([Add money to wallet])
+        UC33([View wallet balance])
+        UC34([View transaction statements])
+    end
+
+    subgraph REVIEW["Review Management"]
+        direction TB
+        UC35([Write a review])
+        UC36([Update own review])
+        UC37([Delete own review])
+        UC38([View my reviews])
+    end
+
+    subgraph NOTIF["Notifications"]
+        direction TB
+        UC39([View notifications])
+        UC40([Mark notification as read])
+        UC41([Mark all as read])
+        UC42([Delete notification])
+        UC43([View unread count])
+    end
+
+    subgraph ADMIN_UC["Admin Controls"]
+        direction TB
+        UC44([View all users])
+        UC45([Delete user])
+        UC46([Add new book])
+        UC47([Update book details])
+        UC48([Delete book])
+        UC49([Update book stock])
+        UC50([View all orders])
+        UC51([Change order status])
+        UC52([Delete order])
+        UC53([View all wallets])
+        UC54([View all reviews])
+        UC55([View all notifications])
+    end
+
+    subgraph SYSTEM["System Automated"]
+        direction TB
+        UC56([Send OTP email])
+        UC57([Generate JWT on login])
+        UC58([Blacklist JWT on logout])
+        UC59([Refresh live prices in cart])
+        UC60([Refresh live prices in wishlist])
+        UC61([Deduct wallet on order])
+        UC62([Refund wallet on cancel])
+        UC63([Deduct stock on order])
+        UC64([Clear cart after order])
+        UC65([Verify Razorpay signature])
+        UC66([Send order confirmation email])
+        UC67([Send cancellation email])
+        UC68([Verify purchase before review])
+        UC69([Sync book rating after review])
+        UC70([Cache book data in Redis])
+    end
+
+    GUEST --> PUB
+    CUSTOMER --> PROFILE
+    CUSTOMER --> CART
+    CUSTOMER --> WISH
+    CUSTOMER --> ORDER
+    CUSTOMER --> WALLET
+    CUSTOMER --> REVIEW
+    CUSTOMER --> NOTIF
+    ADMIN --> ADMIN_UC
+    ADMIN --> ORDER
+
+    PUB --> SYSTEM
+    ORDER --> SYSTEM
+    CART --> SYSTEM
+    WISH --> SYSTEM
+    REVIEW --> SYSTEM
+    WALLET --> SYSTEM
 ```
