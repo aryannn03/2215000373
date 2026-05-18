@@ -184,13 +184,13 @@ erDiagram
 
     CARTS {
         int cartId PK
-        int userId
+        int userId FK
         double totalPrice
     }
 
     CART_ITEMS {
         int itemId PK
-        int bookId
+        int bookId FK
         string bookTitle
         double price
         int quantity
@@ -199,14 +199,14 @@ erDiagram
 
     ORDERS {
         int orderId PK
-        int userId
+        int userId FK
         date orderDate
         double amountPaid
         string modeOfPayment
         string razorpayPaymentId
         string orderStatus
         int quantity
-        int bookId
+        int bookId FK
         string bookTitle
         double bookPrice
         int addressId FK
@@ -214,7 +214,7 @@ erDiagram
 
     ADDRESSES {
         int addressId PK
-        int customerId
+        int customerId FK
         string fullName
         string mobileNumber
         string flatNumber
@@ -226,7 +226,7 @@ erDiagram
 
     WALLETS {
         int walletId PK
-        int userId
+        int userId FK
         double currentBalance
     }
 
@@ -242,8 +242,8 @@ erDiagram
 
     REVIEWS {
         int reviewId PK
-        int bookId
-        int userId
+        int bookId FK
+        int userId FK
         string fullName
         int rating
         text comment
@@ -253,7 +253,7 @@ erDiagram
 
     NOTIFICATIONS {
         int notificationId PK
-        int userId
+        int userId FK
         string type
         text message
         boolean isRead
@@ -262,13 +262,13 @@ erDiagram
 
     WISHLISTS {
         int wishlistId PK
-        int userId
+        int userId FK
         date createdAt
     }
 
     WISHLIST_ITEMS {
         int itemId PK
-        int bookId
+        int bookId FK
         string bookTitle
         double bookPrice
         int wishlistId FK
