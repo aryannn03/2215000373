@@ -289,3 +289,95 @@ erDiagram
     BOOKS ||--o{ REVIEWS : "reviewed in"
     BOOKS ||--o{ WISHLIST_ITEMS : "saved in"
 ```
+
+
+```mermaid
+flowchart TD
+    subgraph GUEST["👤 Guest User"]
+        G1[Browse books]
+        G2[Search books]
+        G3[Filter by genre / author / price]
+        G4[View book details]
+        G5[View reviews and ratings]
+        G6[Register with OTP verification]
+        G7[Login with email and password]
+        G8[Login with GitHub OAuth2]
+        G9[Login with Google OAuth2]
+        G10[Forgot password with OTP reset]
+    end
+
+    subgraph CUSTOMER["🛒 Customer"]
+        C1[View and update profile]
+        C2[Change password]
+        C3[Add book to cart]
+        C4[Remove item from cart]
+        C5[Update item quantity]
+        C6[View cart total]
+        C7[Add book to wishlist]
+        C8[Remove book from wishlist]
+        C9[Move wishlist item to cart]
+        C10[Save delivery address]
+        C11[Delete delivery address]
+        C12[Place order via COD]
+        C13[Place order via Wallet]
+        C14[Place order via Razorpay]
+        C15[View my orders]
+        C16[Cancel order]
+        C17[Create wallet]
+        C18[Add money to wallet]
+        C19[View wallet balance]
+        C20[View transaction statements]
+        C21[Write a review]
+        C22[Update own review]
+        C23[Delete own review]
+        C24[View my reviews]
+        C25[View notifications]
+        C26[Mark notification as read]
+        C27[Mark all notifications as read]
+        C28[Delete notification]
+        C29[View unread notification count]
+        C30[Logout]
+    end
+
+    subgraph ADMIN["🔧 Admin"]
+        A1[View all users]
+        A2[Delete user]
+        A3[Add new book]
+        A4[Update book details]
+        A5[Delete book]
+        A6[Update book stock]
+        A7[View all orders]
+        A8[Change order status]
+        A9[Delete order]
+        A10[View all wallets]
+        A11[View all reviews]
+        A12[View all notifications]
+        A13[View all addresses]
+    end
+
+    subgraph SYSTEM["⚙️ System Automated"]
+        S1[Send OTP email on registration]
+        S2[Send OTP email on forgot password]
+        S3[Generate JWT on login]
+        S4[Blacklist JWT on logout]
+        S5[Refresh live book prices in cart]
+        S6[Refresh live book prices in wishlist]
+        S7[Deduct wallet balance on order]
+        S8[Refund wallet on cancellation]
+        S9[Deduct book stock on order]
+        S10[Clear cart after order placed]
+        S11[Verify Razorpay signature]
+        S12[Send order confirmation email]
+        S13[Send order cancellation email]
+        S14[Send status change email]
+        S15[Save in-app notification on order]
+        S16[Verify purchase before review]
+        S17[Sync book rating after review]
+        S18[Register all services with Eureka]
+        S19[Route requests via API Gateway]
+        S20[Cache book data in Redis]
+    end
+
+    GUEST --> CUSTOMER
+    CUSTOMER --> ADMIN
+```
