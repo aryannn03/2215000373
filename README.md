@@ -146,3 +146,172 @@ ORDER --> RAZOR
 
 NOTIF --> MAIL
 ```
+---
+
+
+
+## 📌 Entity Relationship Diagram (ERD)
+
+```mermaid
+erDiagram
+
+%% =====================================================
+%% USERS
+%% =====================================================
+
+USERS {
+    int id PK
+    string name
+    string email
+    string passwordHash
+    string provider
+    string role
+    boolean enabled
+    datetime createdAt
+}
+
+%% =====================================================
+%% BOOKS
+%% =====================================================
+
+BOOKS {
+    int id PK
+    string title
+    string author
+    decimal price
+    string isbn
+    string publisher
+    integer stock
+    string category
+    string imageUrl
+    text description
+    decimal avgRating
+    datetime publishedDate
+}
+
+%% =====================================================
+%% CART
+%% =====================================================
+
+CARTS {
+    int id PK
+    int userId FK
+}
+
+CART_ITEMS {
+    int id PK
+    int cartId FK
+    int bookId FK
+    decimal price
+    int quantity
+    int count
+}
+
+%% =====================================================
+%% ORDERS
+%% =====================================================
+
+ORDERS {
+    int id PK
+    int userId FK
+    decimal totalAmount
+    string paymentMethod
+    string orderStatus
+    string shippingAddress
+    datetime createdAt
+}
+
+ORDER_ITEMS {
+    int id PK
+    int orderId FK
+    int bookId FK
+    decimal price
+    int quantity
+}
+
+%% =====================================================
+%% REVIEWS
+%% =====================================================
+
+REVIEWS {
+    int id PK
+    int userId FK
+    int bookId FK
+    int rating
+    string comment
+    datetime createdAt
+}
+
+%% =====================================================
+%% WISHLIST
+%% =====================================================
+
+WISHLISTS {
+    int id PK
+    int userId FK
+}
+
+WISHLIST_ITEMS {
+    int id PK
+    int wishlistId FK
+    int bookId FK
+}
+
+%% =====================================================
+%% WALLET
+%% =====================================================
+
+WALLETS {
+    int id PK
+    int userId FK
+    decimal balance
+}
+
+TRANSACTIONS {
+    int id PK
+    int walletId FK
+    string type
+    decimal amount
+    string status
+    datetime createdAt
+}
+
+%% =====================================================
+%% ADDRESSES
+%% =====================================================
+
+ADDRESSES {
+    int id PK
+    int userId FK
+    string fullName
+    string mobileNumber
+    string addressLine
+    string city
+    string pincode
+    string state
+}
+
+%% =====================================================
+%% RELATIONSHIPS
+%% =====================================================
+
+USERS ||--o{ ORDERS : places
+USERS ||--|| CARTS : owns
+USERS ||--|| WISHLISTS : owns
+USERS ||--|| WALLETS : has
+USERS ||--o{ REVIEWS : writes
+USERS ||--o{ ADDRESSES : saves
+
+BOOKS ||--o{ CART_ITEMS : added_in
+BOOKS ||--o{ ORDER_ITEMS : ordered
+BOOKS ||--o{ REVIEWS : reviewed_in
+BOOKS ||--o{ WISHLIST_ITEMS : saved_in
+
+CARTS ||--o{ CART_ITEMS : contains
+
+ORDERS ||--o{ ORDER_ITEMS : contains
+
+WALLETS ||--o{ TRANSACTIONS : records
+
+WISHLISTS ||--o{ WISHLIST_ITEMS : contains
+```
