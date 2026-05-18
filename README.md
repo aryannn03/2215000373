@@ -294,7 +294,6 @@ erDiagram
 
 
 
-
 ```mermaid
 flowchart TD
 
@@ -404,7 +403,10 @@ flowchart TD
         UC70([Cache book data in Redis])
     end
 
+    %% Guest actor connections
     GUEST --> PUB
+
+    %% Customer actor connections
     CUSTOMER --> PROFILE
     CUSTOMER --> CART
     CUSTOMER --> WISH
@@ -412,12 +414,18 @@ flowchart TD
     CUSTOMER --> WALLET
     CUSTOMER --> REVIEW
     CUSTOMER --> NOTIF
-    ADMIN --> ADMIN_UC
 
-    ORDER --> SYSTEM
-    CART --> SYSTEM
-    WISH --> SYSTEM
+    %% Admin actor connections
+    ADMIN --> ADMIN_UC
+    ADMIN --> ORDER
+
+    %% System automated triggers
+    PUB    --> SYSTEM
+    ORDER  --> SYSTEM
+    CART   --> SYSTEM
+    WISH   --> SYSTEM
     REVIEW --> SYSTEM
     WALLET --> SYSTEM
-    PUB --> SYSTEM
+    PROFILE --> SYSTEM
+    ADMIN_UC --> SYSTEM
 ```
