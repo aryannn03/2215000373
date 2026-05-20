@@ -27,7 +27,6 @@ GW --> EU
 JWT[Shared JWT Secret<br/>Auth issues token<br/>All services validate locally<br/>using JwtUtil]
 
 AUTH --> JWT
-BOOK --> JWT
 CART --> JWT
 ORDER --> JWT
 WALLET --> JWT
